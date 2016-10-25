@@ -35,6 +35,10 @@ class config():
         config.ALARMCODE = config.read_config_var('envisalink', 'alarmcode', 1111, 'int')
         config.EVENTTIMEAGO = config.read_config_var('alarmserver', 'eventtimeago', True, 'bool')
         config.LOGFILE = config.read_config_var('alarmserver', 'logfile', '', 'str')
+        config.CALLBACKURL_BASE = config.read_config_var('alarmserver', 'callbackurl_base', '', 'str')
+        config.CALLBACKURL_APP_ID = config.read_config_var('alarmserver', 'callbackurl_app_id', '', 'str')
+        config.CALLBACKURL_ACCESS_TOKEN = config.read_config_var('alarmserver', 'callbackurl_access_token', '', 'str')
+        config.CALLBACKURL_EVENT_CODES = config.read_config_var('alarmserver', 'callbackurl_event_codes', '', 'str')
         if config.LOGFILE == '':
             config.LOGTOFILE = False
         else:

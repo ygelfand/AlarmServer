@@ -1,6 +1,7 @@
 *.pyc
 
 alarmserver.cfg
+alarmserver.log
 .idea
 output.log
 log.txt
