@@ -17,7 +17,7 @@ from core import logger
 from core import httpslistener
 from core import envisalink
 from core import envisalinkproxy
-
+from core import smartthings
 #TODO: move elsewhere
 import tornado.ioloop
 
@@ -50,7 +50,8 @@ def main(argv):
 
     #set version
     state.setVersion(0.3)
-
+	
+    smartclient = smartthings.Client()
     #start envisalink client
     alarmclient = envisalink.Client()
 

@@ -213,7 +213,7 @@ class Client(object):
         
         if (event['type'] == 'zone' and parameters in config.ZONENAMES) or (event['type'] == 'partition' and parameters in config.PARTITIONNAMES):
             events.put('alarm', event['type'], parameters, code, event, message, defaultStatus) 
-            self.callbackurl_event(code, parameters, event, message)
+        #    self.callbackurl_event(code, parameters, event, message)
         elif (event['type'] == 'zone' or event['type'] == 'partition'):
             logger.debug('Ignoring unnamed %s %s' % (event['type'], parameters))
         else:
@@ -225,43 +225,11 @@ class Client(object):
     def handle_partition(self, code, parameters, event, message):
         self.handle_event(code, parameters[0], event, message)
     
-    def callbackurl_event(self, code, parameters, event, message):
-        myEvents = config.CALLBACKURL_EVENT_CODES.split(',')
-        # Determin what events we are sending to smartthings then send if we match
-        if str(code) in myEvents:
-           # Now check if Zone has a custom name, if it does then send notice to Smartthings
-           # Check for event type
-           if event['type'] == 'partition':
-             # Is our partition setup with a custom name?
-             if int(parameters) in config.PARTITIONNAMES:
-               myURL = config.CALLBACKURL_BASE + "/" + config.CALLBACKURL_APP_ID + "/panel/" + str(code) + "/" + str(int(parameters)) + "?access_token=" + config.CALLBACKURL_ACCESS_TOKEN
-             else:
-               # We don't care about this partition
-               return
-           elif event['type'] == 'zone':
-             # Is our zone setup with a custom name, if so we care about it
-             if config.ZONENAMES[int(parameters)]: 
-               myURL = config.CALLBACKURL_BASE + "/" + config.CALLBACKURL_APP_ID + "/panel/" + str(code) + "/" + str(int(parameters)) + "?access_token=" + config.CALLBACKURL_ACCESS_TOKEN
-             else:
-               # We don't care about this zone
-               return
-           else:
-             # Unhandled event type..
-             return
-
-           # If we made it here we should send to Smartthings
-           try:
-             # Note: I don't currently care about the return value, fire and forget right now
-             requests.get(myURL)
-             alarmserver_logger("myURL: %s " % myURL)
-             alarmserver_logger("Exit code: %s" % r.status_code)
-             alarmserver_logger("Response data: %s " % r.text)
-             time.sleep(0.5)
-           except:
-             print sys.exc_info()[0]
 
     def request_action(self, eventType, type, parameters):
         partition = str(parameters['partition'])
+        zone = str(parameters['zone'])
+        if len(zone) == 1: zone = '0' + zone
         if type == 'arm':
             self.send_command('030', partition)
         elif type == 'stayarm':
@@ -277,6 +245,11 @@ class Client(object):
             self.send_command('001', '')
         elif type == 'pgm':
             response = {'response' : 'Request to trigger PGM'}
+        elif type == 'bypass':
+	    self.send_command('071', '1*1' + str(zone)+ '#')
+        elif type == 'instantarm':
+            self.send_command('032', partition + str(parameters['alarmcode']))
+            #self.send_command('071', '1*9' + str(parameters['alarmcode']) + '#')
 
     @gen.coroutine
     def envisalink_proxy(self, eventType, type, parameters, *args):
