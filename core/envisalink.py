@@ -213,7 +213,6 @@ class Client(object):
         
         if (event['type'] == 'zone' and parameters in config.ZONENAMES) or (event['type'] == 'partition' and parameters in config.PARTITIONNAMES):
             events.put('alarm', event['type'], parameters, code, event, message, defaultStatus) 
-        #    self.callbackurl_event(code, parameters, event, message)
         elif (event['type'] == 'zone' or event['type'] == 'partition'):
             logger.debug('Ignoring unnamed %s %s' % (event['type'], parameters))
         else:
