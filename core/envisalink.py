@@ -247,8 +247,7 @@ class Client(object):
         elif type == 'bypass':
 	    self.send_command('071', '1*1' + str(zone)+ '#')
         elif type == 'instantarm':
-            self.send_command('032', partition + str(parameters['alarmcode']))
-            #self.send_command('071', '1*9' + str(parameters['alarmcode']) + '#')
+            self.send_command('071', '1*9' + str(parameters['alarmcode']))
 
     @gen.coroutine
     def envisalink_proxy(self, eventType, type, parameters, *args):
